@@ -1,0 +1,530 @@
+{
+  "tolerance": 1e-06,
+  "cases": [
+    {
+      "input": {
+        "Platform": "Instagram",
+        "Content_Type": "Carousel",
+        "Category": "Food",
+        "Day_of_Week": "Saturday",
+        "Sentiment": "Negative",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 499011,
+        "Hour_of_Day": 17,
+        "Hashtag_Count": 15,
+        "Content_Length": 1352,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 5035.774534786847,
+      "expected": 5035.774534786847,
+      "expected_low": 1069.5311227755806,
+      "expected_high": 9023.780206453563,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "LinkedIn",
+        "Content_Type": "Post",
+        "Category": "Food",
+        "Day_of_Week": "Friday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Micro",
+        "Follower_Count": 21393,
+        "Hour_of_Day": 5,
+        "Hashtag_Count": 15,
+        "Content_Length": 488,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 935.6491456994327,
+      "expected": 935.6491456994327,
+      "expected_low": 0.0,
+      "expected_high": 2024.328238638639,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "YouTube",
+        "Content_Type": "Video",
+        "Category": "Technology",
+        "Day_of_Week": "Wednesday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 472382,
+        "Hour_of_Day": 19,
+        "Hashtag_Count": 6,
+        "Content_Length": 39,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 10520.533804168079,
+      "expected": 10520.533804168079,
+      "expected_low": 2411.1043667635586,
+      "expected_high": 18584.824452055433,
+      "expected_level": "High"
+    },
+    {
+      "input": {
+        "Platform": "Twitter",
+        "Content_Type": "Tweet",
+        "Category": "Travel",
+        "Day_of_Week": "Monday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 282124,
+        "Hour_of_Day": 7,
+        "Hashtag_Count": 25,
+        "Content_Length": 179,
+        "Has_Media": true,
+        "Is_Verified": false
+      },
+      "expected_raw": 2731.691750895413,
+      "expected": 2731.691750895413,
+      "expected_low": 695.092899293734,
+      "expected_high": 4877.0797100060845,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "Instagram",
+        "Content_Type": "Carousel",
+        "Category": "Lifestyle",
+        "Day_of_Week": "Monday",
+        "Sentiment": "Neutral",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 109764,
+        "Hour_of_Day": 19,
+        "Hashtag_Count": 18,
+        "Content_Length": 726,
+        "Has_Media": false,
+        "Is_Verified": true
+      },
+      "expected_raw": 5730.707959364413,
+      "expected": 5730.707959364413,
+      "expected_low": 1764.4645473531468,
+      "expected_high": 9718.713631031129,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "Twitter",
+        "Content_Type": "Tweet",
+        "Category": "Lifestyle",
+        "Day_of_Week": "Tuesday",
+        "Sentiment": "Neutral",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 398112,
+        "Hour_of_Day": 17,
+        "Hashtag_Count": 8,
+        "Content_Length": 1928,
+        "Has_Media": true,
+        "Is_Verified": false
+      },
+      "expected_raw": 3030.6450498888735,
+      "expected": 3030.6450498888735,
+      "expected_low": 994.0461982871946,
+      "expected_high": 5176.033008999544,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "Facebook",
+        "Content_Type": "Post",
+        "Category": "Fashion",
+        "Day_of_Week": "Saturday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 203727,
+        "Hour_of_Day": 7,
+        "Hashtag_Count": 21,
+        "Content_Length": 935,
+        "Has_Media": true,
+        "Is_Verified": false
+      },
+      "expected_raw": 3910.5420070025352,
+      "expected": 3910.5420070025352,
+      "expected_low": 728.842865362722,
+      "expected_high": 7198.889256868311,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "Facebook",
+        "Content_Type": "Post",
+        "Category": "Fitness",
+        "Day_of_Week": "Tuesday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 291790,
+        "Hour_of_Day": 7,
+        "Hashtag_Count": 26,
+        "Content_Length": 1035,
+        "Has_Media": true,
+        "Is_Verified": false
+      },
+      "expected_raw": 4634.1590014050935,
+      "expected": 4634.1590014050935,
+      "expected_low": 1452.4598597652803,
+      "expected_high": 7922.506251270869,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "LinkedIn",
+        "Content_Type": "Article",
+        "Category": "Fashion",
+        "Day_of_Week": "Friday",
+        "Sentiment": "Neutral",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 201634,
+        "Hour_of_Day": 5,
+        "Hashtag_Count": 3,
+        "Content_Length": 1808,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": -170.683040789605,
+      "expected": 0.0,
+      "expected_low": 0.0,
+      "expected_high": 1088.6790929392064,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "Instagram",
+        "Content_Type": "Carousel",
+        "Category": "Sports",
+        "Day_of_Week": "Thursday",
+        "Sentiment": "Negative",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 275281,
+        "Hour_of_Day": 19,
+        "Hashtag_Count": 6,
+        "Content_Length": 1583,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 4583.270913530113,
+      "expected": 4583.270913530113,
+      "expected_low": 617.0275015188467,
+      "expected_high": 8571.276585196829,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "TikTok",
+        "Content_Type": "Stitch",
+        "Category": "Food",
+        "Day_of_Week": "Monday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 168516,
+        "Hour_of_Day": 22,
+        "Hashtag_Count": 8,
+        "Content_Length": 429,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 26678.266329064347,
+      "expected": 26678.266329064347,
+      "expected_low": 7316.987513747994,
+      "expected_high": 46681.55570425854,
+      "expected_level": "High"
+    },
+    {
+      "input": {
+        "Platform": "LinkedIn",
+        "Content_Type": "Post",
+        "Category": "Health",
+        "Day_of_Week": "Tuesday",
+        "Sentiment": "Negative",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 274745,
+        "Hour_of_Day": 7,
+        "Hashtag_Count": 25,
+        "Content_Length": 1289,
+        "Has_Media": true,
+        "Is_Verified": false
+      },
+      "expected_raw": 624.7768575389191,
+      "expected": 624.7768575389191,
+      "expected_low": 0.0,
+      "expected_high": 1713.4559504781255,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "LinkedIn",
+        "Content_Type": "Post",
+        "Category": "Business",
+        "Day_of_Week": "Wednesday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Mid-tier",
+        "Follower_Count": 53698,
+        "Hour_of_Day": 7,
+        "Hashtag_Count": 14,
+        "Content_Length": 1877,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 1559.2531921163472,
+      "expected": 1559.2531921163472,
+      "expected_low": 513.8112233756608,
+      "expected_high": 2647.9322850555536,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "LinkedIn",
+        "Content_Type": "Document",
+        "Category": "Sports",
+        "Day_of_Week": "Thursday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 153052,
+        "Hour_of_Day": 18,
+        "Hashtag_Count": 13,
+        "Content_Length": 109,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 620.9744704357763,
+      "expected": 620.9744704357763,
+      "expected_low": 0.0,
+      "expected_high": 1709.6535633749827,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "Twitter",
+        "Content_Type": "Thread",
+        "Category": "Lifestyle",
+        "Day_of_Week": "Sunday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 242126,
+        "Hour_of_Day": 8,
+        "Hashtag_Count": 20,
+        "Content_Length": 1054,
+        "Has_Media": true,
+        "Is_Verified": false
+      },
+      "expected_raw": 2386.1875067722694,
+      "expected": 2386.1875067722694,
+      "expected_low": 349.5886551705905,
+      "expected_high": 4531.575465882941,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "LinkedIn",
+        "Content_Type": "Post",
+        "Category": "Sports",
+        "Day_of_Week": "Sunday",
+        "Sentiment": "Neutral",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 429735,
+        "Hour_of_Day": 1,
+        "Hashtag_Count": 22,
+        "Content_Length": 1815,
+        "Has_Media": true,
+        "Is_Verified": false
+      },
+      "expected_raw": 379.45116890705776,
+      "expected": 379.45116890705776,
+      "expected_low": 0.0,
+      "expected_high": 1468.1302618462641,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "LinkedIn",
+        "Content_Type": "Post",
+        "Category": "Entertainment",
+        "Day_of_Week": "Monday",
+        "Sentiment": "Neutral",
+        "Influencer_Tier": "Nano",
+        "Follower_Count": 1995,
+        "Hour_of_Day": 18,
+        "Hashtag_Count": 9,
+        "Content_Length": 596,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 1498.5133382010972,
+      "expected": 1498.5133382010972,
+      "expected_low": 453.0713694604108,
+      "expected_high": 2587.1924311403036,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "LinkedIn",
+        "Content_Type": "Document",
+        "Category": "Technology",
+        "Day_of_Week": "Sunday",
+        "Sentiment": "Neutral",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 160451,
+        "Hour_of_Day": 21,
+        "Hashtag_Count": 11,
+        "Content_Length": 1448,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 465.5417540356202,
+      "expected": 465.5417540356202,
+      "expected_low": 0.0,
+      "expected_high": 1554.2208469748266,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "Instagram",
+        "Content_Type": "Carousel",
+        "Category": "Lifestyle",
+        "Day_of_Week": "Friday",
+        "Sentiment": "Positive",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 394668,
+        "Hour_of_Day": 1,
+        "Hashtag_Count": 20,
+        "Content_Length": 1177,
+        "Has_Media": true,
+        "Is_Verified": false
+      },
+      "expected_raw": 5305.9442652821535,
+      "expected": 5305.9442652821535,
+      "expected_low": 1339.7008532708874,
+      "expected_high": 9293.94993694887,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "Twitter",
+        "Content_Type": "Tweet",
+        "Category": "Fashion",
+        "Day_of_Week": "Thursday",
+        "Sentiment": "Neutral",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 374538,
+        "Hour_of_Day": 19,
+        "Hashtag_Count": 12,
+        "Content_Length": 1583,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 1929.1535867062466,
+      "expected": 1929.1535867062466,
+      "expected_low": 0.0,
+      "expected_high": 4074.5415458169177,
+      "expected_level": "Low"
+    },
+    {
+      "input": {
+        "Platform": "Mastodon",
+        "Content_Type": "Carousel",
+        "Category": "Food",
+        "Day_of_Week": "Saturday",
+        "Sentiment": "Negative",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 499011,
+        "Hour_of_Day": 17,
+        "Hashtag_Count": 15,
+        "Content_Length": 1352,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 7597.120179127382,
+      "expected": 7597.120179127382,
+      "expected_low": 2919.4539113808787,
+      "expected_high": 12310.455144902528,
+      "expected_level": "High"
+    },
+    {
+      "input": {
+        "Platform": "Instagram",
+        "Content_Type": "Carousel",
+        "Category": "Food",
+        "Day_of_Week": "Saturday",
+        "Sentiment": "Negative",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 543,
+        "Hour_of_Day": 17,
+        "Hashtag_Count": 15,
+        "Content_Length": 1352,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 4772.5900326550645,
+      "expected": 4772.5900326550645,
+      "expected_low": 806.3466206437984,
+      "expected_high": 8760.59570432178,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "Instagram",
+        "Content_Type": "Carousel",
+        "Category": "Food",
+        "Day_of_Week": "Saturday",
+        "Sentiment": "Negative",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 499815,
+        "Hour_of_Day": 17,
+        "Hashtag_Count": 15,
+        "Content_Length": 1352,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 5036.199036138416,
+      "expected": 5036.199036138416,
+      "expected_low": 1069.9556241271498,
+      "expected_high": 9024.204707805133,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "Instagram",
+        "Content_Type": "Carousel",
+        "Category": "Food",
+        "Day_of_Week": "Saturday",
+        "Sentiment": "Negative",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 499011,
+        "Hour_of_Day": 17,
+        "Hashtag_Count": 0,
+        "Content_Length": 15,
+        "Has_Media": true,
+        "Is_Verified": true
+      },
+      "expected_raw": 4707.979687615498,
+      "expected": 4707.979687615498,
+      "expected_low": 741.7362756042317,
+      "expected_high": 8695.985359282215,
+      "expected_level": "Medium"
+    },
+    {
+      "input": {
+        "Platform": "Instagram",
+        "Content_Type": "Carousel",
+        "Category": "Food",
+        "Day_of_Week": "Saturday",
+        "Sentiment": "Negative",
+        "Influencer_Tier": "Macro",
+        "Follower_Count": 499011,
+        "Hour_of_Day": 23,
+        "Hashtag_Count": 15,
+        "Content_Length": 1999,
+        "Has_Media": false,
+        "Is_Verified": true
+      },
+      "expected_raw": 5472.226388685833,
+      "expected": 5472.226388685833,
+      "expected_low": 1505.9829766745665,
+      "expected_high": 9460.23206035255,
+      "expected_level": "Medium"
+    }
+  ]
+}

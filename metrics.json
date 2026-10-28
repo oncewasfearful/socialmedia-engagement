@@ -1,0 +1,188 @@
+{
+  "selected_model": "Ridge (linear)",
+  "selection_rule": "Lowest 5-fold CV RMSE among deployable models; Ridge preferred when within one standard error.",
+  "dataset": {
+    "rows": 5000,
+    "train": 4000,
+    "test": 1000,
+    "seed": 42
+  },
+  "cross_validation": [
+    {
+      "model": "Mean baseline",
+      "cv_mae": 6633.8542121875,
+      "cv_rmse": 10228.504820710144,
+      "cv_rmse_std": 626.8638391398295,
+      "cv_r2": -0.002299425510116615
+    },
+    {
+      "model": "Ridge (linear)",
+      "cv_mae": 3786.64042033245,
+      "cv_rmse": 6279.027505877658,
+      "cv_rmse_std": 368.6243761992329,
+      "cv_r2": 0.6209222120547115
+    },
+    {
+      "model": "Gradient Boosting",
+      "cv_mae": 3773.3880481267115,
+      "cv_rmse": 6344.228660376786,
+      "cv_rmse_std": 374.857821064738,
+      "cv_r2": 0.6131652332441597
+    },
+    {
+      "model": "Random Forest (reference)",
+      "cv_mae": 3764.629288485294,
+      "cv_rmse": 6368.129435836338,
+      "cv_rmse_std": 386.0766902886276,
+      "cv_r2": 0.6107034613250828
+    }
+  ],
+  "test_all_models": [
+    {
+      "model": "Mean baseline",
+      "test_mae": 6530.921712499999,
+      "test_rmse": 9862.237201252388,
+      "test_r2": -0.0009904613607047974
+    },
+    {
+      "model": "Ridge (linear)",
+      "test_mae": 3825.487937121587,
+      "test_rmse": 6326.657449665019,
+      "test_r2": 0.5880659489073539
+    },
+    {
+      "model": "Gradient Boosting",
+      "test_mae": 3746.3325234420736,
+      "test_rmse": 6236.1436492837265,
+      "test_r2": 0.5997684943244017
+    },
+    {
+      "model": "Random Forest (reference)",
+      "test_mae": 3691.3379081741255,
+      "test_rmse": 6209.8596920053305,
+      "test_r2": 0.6031351578773945
+    }
+  ],
+  "test_selected": {
+    "mae": 3825.487937121587,
+    "rmse": 6326.657449665019,
+    "r2": 0.5880659489073539
+  },
+  "overall_average_benchmark": {
+    "mae": 6530.921712499999,
+    "rmse": 9862.237201252388,
+    "r2": -0.0009904613607047974
+  },
+  "platform_average_benchmark": {
+    "mae": 3781.597774049508,
+    "rmse": 6333.117456919011,
+    "r2": 0.5872242862845694
+  },
+  "per_platform": [
+    {
+      "platform": "Facebook",
+      "n_test": 188,
+      "mae": 1988.8886152306811,
+      "mean_actual_likes": 4357.202127659574,
+      "range_coverage": 0.8138297872340425
+    },
+    {
+      "platform": "Instagram",
+      "n_test": 255,
+      "mae": 2504.837488858142,
+      "mean_actual_likes": 4754.3372549019605,
+      "range_coverage": 0.8352941176470589
+    },
+    {
+      "platform": "LinkedIn",
+      "n_test": 99,
+      "mae": 628.2089594580978,
+      "mean_actual_likes": 964.7575757575758,
+      "range_coverage": 0.8585858585858586
+    },
+    {
+      "platform": "TikTok",
+      "n_test": 151,
+      "mae": 13030.78109772064,
+      "mean_actual_likes": 24454.099337748343,
+      "range_coverage": 0.8079470198675497
+    },
+    {
+      "platform": "Twitter",
+      "n_test": 214,
+      "mae": 1329.068982902224,
+      "mean_actual_likes": 2438.504672897196,
+      "range_coverage": 0.8084112149532711
+    },
+    {
+      "platform": "YouTube",
+      "n_test": 93,
+      "mae": 5361.095943184386,
+      "mean_actual_likes": 10185.236559139785,
+      "range_coverage": 0.7956989247311828
+    }
+  ],
+  "range_coverage": {
+    "overall": 0.82
+  },
+  "permutation_importance": {
+    "Platform": {
+      "rmse_increase": 6654.540135961714,
+      "std": 275.617056019291
+    },
+    "Content_Type": {
+      "rmse_increase": 11.699213694306945,
+      "std": 9.441252894838133
+    },
+    "Category": {
+      "rmse_increase": 8.704782129820888,
+      "std": 14.388237009243795
+    },
+    "Day_of_Week": {
+      "rmse_increase": 7.1922962275340065,
+      "std": 9.255170969798373
+    },
+    "Sentiment": {
+      "rmse_increase": 5.948853769193829,
+      "std": 2.2169828723538956
+    },
+    "Influencer_Tier": {
+      "rmse_increase": 12.661850515590412,
+      "std": 5.98082874687503
+    },
+    "Follower_Count": {
+      "rmse_increase": -3.5721093203689636,
+      "std": 1.8828497152462813
+    },
+    "Hour_of_Day": {
+      "rmse_increase": 0.7552554012900146,
+      "std": 6.28896995054892
+    },
+    "Hashtag_Count": {
+      "rmse_increase": 2.261530049811063,
+      "std": 3.891979827870052
+    },
+    "Content_Length": {
+      "rmse_increase": 1.6138787037419207,
+      "std": 0.6209079899938136
+    },
+    "Has_Media": {
+      "rmse_increase": 4.478428840970992,
+      "std": 2.901420749571194
+    },
+    "Is_Verified": {
+      "rmse_increase": 3.673135096555325,
+      "std": 3.690532187492441
+    }
+  },
+  "leakage_experiment": {
+    "features": [
+      "Comments",
+      "Shares",
+      "Views",
+      "Saves",
+      "Engagement_Rate"
+    ],
+    "test_r2": 0.7875891414662158
+  }
+}

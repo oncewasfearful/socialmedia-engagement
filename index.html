@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Likecast – Post like predictor</title>
+<style>
+:root{--bg:#eef1f6;--card:#fff;--ink:#0f1b2d;--mut:#62708a;--line:#dde3ee;--acc:#2447f5;--soft:#e6ebff;--mint:#0f9d8a;--ok:#12805c;--warn:#b86e00;--err:#c9302c;--nav:#0f1b2d}
+@media(prefers-color-scheme:dark){:root{--bg:#0b111c;--card:#131c2b;--ink:#e8edf7;--mut:#8b99b3;--line:#233047;--acc:#7b94ff;--soft:#1c2750;--mint:#35c9b3;--ok:#4cd6a0;--warn:#f0b04a;--err:#ff7b75;--nav:#070b12}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Avenir Next","Segoe UI",system-ui,sans-serif}
+header{background:var(--nav);color:#e8edf7;padding:18px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header b{font-size:20px;letter-spacing:-.3px}header span{color:#9fb0cf;font-size:13px}
+.logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#2447f5,#0f9d8a);display:grid;place-items:center;font-weight:800}
+main{max-width:1180px;margin:0 auto;padding:22px 16px 60px;display:grid;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+h2{margin:0 0 4px;font-size:18px;letter-spacing:-.2px}h3{margin:0 0 10px;font-size:15px}.sub{color:var(--mut);margin:0 0 14px;font-size:14px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:34px 16px;text-align:center;transition:.15s}
+.drop.on{border-color:var(--acc);background:var(--soft)}
+button,.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer}
+button.p{background:var(--acc);border-color:var(--acc);color:#fff}button:hover{filter:brightness(.96)}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{border:1px solid var(--line);border-radius:10px;padding:12px 14px}.kpi small{color:var(--mut);display:block}.kpi strong{font-size:23px;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.kpi.hl{background:var(--soft);border-color:transparent}
+.msg{padding:10px 14px;border-radius:8px;border:1px solid;font-size:14px;margin-bottom:8px}
+.msg.err{color:var(--err);border-color:var(--err)}.msg.warn{color:var(--warn);border-color:var(--warn)}.msg.ok{color:var(--ok);border-color:var(--ok)}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+th{color:var(--mut);font-weight:600}td.n,th.n{text-align:right}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{display:flex;gap:7px;align-items:center;border:1px solid var(--line);border-radius:20px;padding:4px 12px;font-size:13.5px;cursor:pointer}
+.chip:has(input:checked){background:var(--soft);border-color:var(--acc)}.chip i{font-style:normal;color:var(--mut);font-size:12px}
+.chip.leak b{color:var(--warn);font-weight:600;font-size:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px}
+canvas{width:100%;display:block}
+select,input[type=text],input[type=number]{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+.hid{display:none!important}.ov{position:fixed;inset:0;background:rgba(8,12,20,.55);display:grid;place-items:center;z-index:9;color:#fff;font-weight:600}
+.sp{width:34px;height:34px;border:4px solid #fff4;border-top-color:#fff;border-radius:50%;animation:s .8s linear infinite;margin:0 auto 10px}@keyframes s{to{transform:rotate(360deg)}}
+.tag{font-size:12px;padding:2px 8px;border-radius:10px;background:var(--soft);color:var(--acc);font-weight:600}
+.note{font-size:13px;color:var(--mut)}
+.bar{height:8px;border-radius:6px;background:#ffffff33;margin:14px 0 8px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#fff;border-radius:6px}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:22px;max-width:440px}dialog::backdrop{background:rgba(8,12,20,.55)}
+dialog p{margin:0 0 16px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><div class="logo">L</div><b>Likecast</b><span>Predict post likes from metadata. Everything runs in your browser; your file is never uploaded.</span></header>
+<main>
+<div id="msg"></div>
+<section class="card" id="s1"><h2>Upload post data</h2><p class="sub">CSV with one row per post. Include a likes column to train and validate a model, or a followers column for a rough estimate.</p>
+<div class="drop" id="drop"><p style="margin:0 0 12px">Drop a CSV file here</p><div class="row" style="justify-content:center"><button class="p" id="pick">Choose CSV file</button></div><input type="file" id="file" accept=".csv,.tsv,.txt,text/csv" class="hid"></div></section>
+
+<section class="card hid" id="s2"><div class="row" style="justify-content:space-between"><div><h2>Review data and configure</h2><p class="sub" id="fname"></p></div></div>
+<div class="kpis" id="ov"></div>
+<h3 style="margin-top:20px">Detected columns</h3><div class="tbl"><table id="cols"></table></div>
+<div class="grid2" style="margin-top:20px"><div><h3>Target (what to predict)</h3><select id="tgt"></select><p class="note" id="tnote"></p>
+<div id="rateBox" class="hid"><h3>Assumed engagement rate (likes ÷ followers)</h3><input type="number" id="rate" value="2.5" min="0.1" max="50" step="0.1"> %</div></div>
+<div><h3>Features to use</h3><div class="chips" id="feats"></div><p class="note">Amber chips are counted after a post is published (comments, views…). They usually leak the answer and are off by default.</p></div></div>
+<div class="row" style="margin-top:18px"><button class="p" id="run">Train and predict</button></div></section>
+
+<section class="card hid" id="s3"><div class="row" style="justify-content:space-between"><div><h2>Results</h2><p class="sub" id="rmode"></p></div><div class="row"><button id="dl1">Download predictions CSV</button><button id="dl2">Download processed features CSV</button></div></div>
+<div class="kpis" id="kpis"></div><p class="note" id="knote" style="margin-top:10px"></p>
+<div class="grid2" style="margin-top:18px"><div><h3 id="c1t">Actual vs predicted likes</h3><canvas id="c1"></canvas></div><div><h3 id="c2t">What drives the prediction</h3><canvas id="c2"></canvas></div></div>
+<div style="margin-top:18px"><h3>Distribution of predicted likes</h3><canvas id="c3" style="height:200px"></canvas></div>
+<h3 style="margin-top:22px">Post-level predictions</h3>
+<div class="row" style="margin-bottom:10px"><input type="text" id="q" placeholder="Search rows" aria-label="Search rows"><select id="sort" aria-label="Sort"><option value="row">Original order</option><option value="pred">Highest predicted</option><option value="act">Highest actual</option><option value="err">Largest error</option></select><span class="note" id="pg"></span><button id="prev">Prev</button><button id="next">Next</button></div>
+<div class="tbl"><table id="out"></table></div></section>
+</main>
+<div class="ov hid" id="ov2"><div style="width:min(420px,88vw);text-align:center"><div class="sp"></div><div id="ovt">Working…</div><div class="bar"><i id="bari"></i></div><small id="ovs"></small></div></div>
+<dialog id="dlg"><p><b>This data has already been predicted.</b><br>Do you want to see the previously saved output?</p><div class="row" style="justify-content:flex-end"><button id="no">No, run again</button><button class="p" id="yes">Yes, show it</button></div></dialog>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=x=>x==null||!isFinite(x)?'–':Math.round(x).toLocaleString('en-US');
+let S={headers:[],rows:[],prof:[],out:null,page:0};
+const msg=(k,t)=>{const d=document.createElement('div');d.className='msg '+k;d.textContent=t;$('#msg').appendChild(d);if(k=='err')scrollTo({top:0,behavior:'smooth'})};
+const clr=()=>$('#msg').innerHTML='';
+/* ---------- CSV ---------- */
+function parseCSV(t){t=t.replace(/^\uFEFF/,'');const f0=t.split(/\r?\n/)[0];const d=[',',';','\t','|'].map(c=>[c,f0.split(c).length]).sort((a,b)=>b[1]-a[1])[0][0];
+const out=[];let r=[],f='',q=false;
+for(let i=0;i<t.length;i++){const c=t[i];
+if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
+else if(c=='"')q=true;else if(c==d){r.push(f);f=''}
+else if(c=='\n'||c=='\r'){if(c=='\r'&&t[i+1]=='\n')i++;r.push(f);out.push(r);r=[];f=''}else f+=c}
+if(f!==''||r.length){r.push(f);out.push(r)}
+return out.filter(r=>r.some(x=>x.trim()!==''))}
+function num(v){if(v==null)return NaN;const s=String(v).trim().replace(/,/g,'');if(s==='')return NaN;const m=s.match(/^(-?\d*\.?\d+)\s*([kKmM])?$/);if(!m)return NaN;let x=+m[1];if(m[2])x*=/k/i.test(m[2])?1e3:1e6;return x}
+function toCSV(h,rows){const q=v=>{v=v==null?'':String(v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};return '\uFEFF'+[h.map(q).join(',')].concat(rows.map(r=>r.map(q).join(','))).join('\r\n')}
+function dl(name,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1e3)}
+/* ---------- load + profile ---------- */
+function load(text,name){clr();try{const t=parseCSV(text);if(t.length<2)throw Error('The file needs a header row and at least one data row.');
+const seen={};const hd=t[0].map((h,i)=>{h=h.trim()||'column_'+(i+1);seen[h]=(seen[h]||0)+1;return seen[h]>1?h+'_'+seen[h]:h});
+const bad=t.slice(1).filter(r=>r.length!==hd.length).length;
+const rows=t.slice(1).map(r=>{const o={};hd.forEach((h,i)=>o[h]=(r[i]||'').trim());return o});
+if(rows.length>150000)throw Error('This file has '+fmt(rows.length)+' rows. The browser limit for this tool is 150,000.');
+if(hd.length<2)throw Error('Only one column was found. Check that the file is a comma, semicolon or tab separated CSV.');
+S={headers:hd,rows,name,out:null,page:0,hash:hashStr(text)};S.prof=profile();
+if(bad)msg('warn',fmt(bad)+' rows had a different number of fields than the header. Missing fields were left blank and extras ignored.');
+show(name)}catch(e){msg('err',e.message)}}
+function profile(){const n=S.rows.length;return S.headers.map(h=>{const vals=S.rows.map(r=>r[h]).filter(v=>v!=='');const m=vals.length,smp=vals.slice(0,2000),k=Math.max(smp.length,1);
+const nn=smp.filter(v=>!isNaN(num(v))).length/k,dt=smp.filter(v=>isNaN(num(v))&&/[-\/:T]/.test(v)&&!isNaN(Date.parse(v))).length/k;
+const uniq=new Set(vals).size,avg=smp.reduce((a,v)=>a+v.length,0)/k;let type;
+if(m===0)type='empty';else if(/(^|[_\s-])id$|^id$|url|link|permalink/i.test(h))type='id';
+else if(nn>.9)type='numeric';else if(dt>.8)type='date';
+else if(avg>35&&uniq/m>.5||(/caption|text|description|content|title|message|tweet|post_?body/i.test(h)&&avg>15))type='text';
+else if(uniq/m>.9&&m>20)type='id';else type='category';
+return{h,type,missing:1-m/n,uniq,m}})}
+const LEAK=/comment|share|retweet|repost|view|impression|reach|save|repl(y|ies)|click/i;
+function show(name){$('#s2').classList.remove('hid');$('#s3').classList.add('hid');$('#fname').textContent=name+' · '+fmt(S.rows.length)+' rows';
+const seen=new Set();let dup=0;S.rows.forEach(r=>{const k=S.headers.map(h=>r[h]).join('\u0001');if(seen.has(k))dup++;else seen.add(k)});
+const miss=S.rows.reduce((a,r)=>a+S.headers.filter(h=>r[h]==='').length,0)/(S.rows.length*S.headers.length);
+$('#ov').innerHTML=[['Rows',fmt(S.rows.length)],['Columns',S.headers.length],['Duplicate rows',fmt(dup)],['Missing cells',(miss*100).toFixed(1)+'%']].map(([a,b])=>`<div class="kpi"><small>${a}</small><strong>${b}</strong></div>`).join('');
+if(dup)msg('warn',fmt(dup)+' duplicate rows found. They are kept, but may make validation scores look slightly better than reality.');
+$('#cols').innerHTML='<tr><th>Column</th><th>Type</th><th class="n">Missing</th><th class="n">Unique</th><th>Sample</th></tr>'+S.prof.map(p=>`<tr><td>${esc(p.h)}</td><td><span class="tag">${p.type}</span></td><td class="n">${(p.missing*100).toFixed(1)}%</td><td class="n">${fmt(p.uniq)}</td><td>${esc((S.rows.find(r=>r[p.h]!=='')||{})[p.h]||'')}</td></tr>`).join('');
+const numc=S.prof.filter(p=>p.type=='numeric');let guess=numc.find(p=>/^(likes?|like[_ ]?count|n[_ ]?likes|num[_ ]?likes|likes[_ ]?count|favou?rites?|reactions?|hearts?|upvotes?)$/i.test(p.h))||numc.find(p=>/like|favou?rite|heart|upvote/i.test(p.h));
+$('#tgt').innerHTML='<option value="">None (no like counts in this file)</option>'+numc.map(p=>`<option ${guess&&guess.h==p.h?'selected':''}>${esc(p.h)}</option>`).join('');
+if(!guess)msg('warn','No likes column was detected. Pick one in Target, or continue without one to get a rough estimate (no accuracy can be measured).');
+else msg('ok','Detected "'+guess.h+'" as the target. A model will be trained on posts with a valid value and validated with cross-validation.');
+chips();$('#s2').scrollIntoView({behavior:'smooth'})}
+function chips(){const t=$('#tgt').value;$('#feats').innerHTML=S.prof.filter(p=>p.h!==t&&!['id','empty'].includes(p.type)).map(p=>{const lk=LEAK.test(p.h);return `<label class="chip ${lk?'leak':''}"><input type="checkbox" value="${esc(p.h)}" ${lk?'':'checked'}>${esc(p.h)} <i>${p.type}</i>${lk?' <b>post-publish</b>':''}</label>`}).join('')||'<span class="note">No usable feature columns.</span>';
+const hasF=S.prof.some(p=>p.type=='numeric'&&/follower|subscriber|fans|audience/i.test(p.h));
+$('#rateBox').classList.toggle('hid',!!t);
+$('#tnote').textContent=t?'Rows with a valid, non-negative like count are used for training and validation.':hasF?'Heuristic mode: estimates likes as followers × an assumed rate, adjusted by posting hour and format.':'Heuristic mode needs a followers column, which was not found. Add one or choose a target.'}
+$('#tgt').onchange=chips;
+/* ---------- features ---------- */
+function features(feats,lab){const rows=S.rows,n=rows.length,cols=[],names=[],grp=[];const add=(nm,g,a)=>{cols.push(a);names.push(nm);grp.push(g)};const T=2*Math.PI;
+for(const h of feats){const t=S.prof.find(p=>p.h===h).type;
+if(t=='numeric'){const raw=rows.map(r=>num(r[h]));const fin=lab.map(i=>raw[i]).filter(isFinite).sort((a,b)=>a-b);const med=fin.length?fin[fin.length>>1]:0,mx=fin[fin.length-1]||0,mn=fin[0]||0;
+const miss=raw.filter(v=>!isFinite(v)).length/n,lg=mn>=0&&mx>50&&mx/(Math.abs(med)||1)>20;
+add(h+(lg?' (log)':''),h,raw.map(v=>{v=isFinite(v)?v:med;return lg?Math.log1p(Math.max(v,0)):v}));if(miss>.02)add(h+' missing',h,raw.map(v=>isFinite(v)?0:1))}
+else if(t=='date'){const d=rows.map(r=>{const x=Date.parse(r[h]);return isFinite(x)?new Date(x):null});const hasH=d.some(x=>x&&(x.getHours()||x.getMinutes()));const f=fn=>d.map(x=>x?fn(x):0);
+if(hasH){add(h+' hour sin',h,f(x=>Math.sin(T*x.getHours()/24)));add(h+' hour cos',h,f(x=>Math.cos(T*x.getHours()/24)))}
+add(h+' weekday sin',h,f(x=>Math.sin(T*x.getDay()/7)));add(h+' weekday cos',h,f(x=>Math.cos(T*x.getDay()/7)));add(h+' weekend',h,f(x=>x.getDay()%6==0?1:0));
+const mn=Math.min(...d.filter(Boolean).map(x=>+x));add(h+' age (days)',h,f(x=>(+x-mn)/864e5))}
+else if(t=='category'){const c={};rows.forEach(r=>{const v=r[h]||'(missing)';c[v]=(c[v]||0)+1});
+Object.entries(c).filter(e=>e[1]>=Math.max(2,n*.005)).sort((a,b)=>b[1]-a[1]).slice(0,15).forEach(([lv])=>add(h+' = '+lv,h,rows.map(r=>(r[h]||'(missing)')===lv?1:0)))}
+else if(t=='text'){const tx=rows.map(r=>r[h]);const cnt=re=>tx.map(s=>(s.match(re)||[]).length);
+add(h+' length (log)',h,tx.map(s=>Math.log1p(s.length)));add(h+' words (log)',h,tx.map(s=>Math.log1p(s.split(/\s+/).filter(Boolean).length)));
+add(h+' hashtags',h,cnt(/#\w+/g));add(h+' mentions',h,cnt(/@\w+/g));add(h+' links',h,cnt(/https?:\/\//g));add(h+' questions',h,cnt(/\?/g));add(h+' exclamations',h,cnt(/!/g));add(h+' emoji',h,cnt(/\p{Extended_Pictographic}/gu));
+add(h+' caps ratio',h,tx.map(s=>{const l=(s.match(/[A-Za-z]/g)||[]).length;return l?(s.match(/[A-Z]/g)||[]).length/l:0}))}}
+const keep=[];cols.forEach((c,j)=>{let m=0;lab.forEach(i=>m+=c[i]);m/=lab.length;let v=0;lab.forEach(i=>v+=(c[i]-m)**2);const sd=Math.sqrt(v/lab.length);if(sd>1e-9)keep.push({j,m,sd})});
+if(!keep.length)throw Error('None of the selected features vary across your posts. Select different columns.');
+const p=keep.length+1,X=rows.map((_,i)=>{const x=new Float64Array(p);x[0]=1;keep.forEach((k,a)=>x[a+1]=(cols[k.j][i]-k.m)/k.sd);return x});
+return{X,names:keep.map(k=>names[k.j]),grp:keep.map(k=>grp[k.j]),p}}
+/* ---------- ridge regression ---------- */
+function xtx(X,y,idx,p){const A=new Float64Array(p*p),b=new Float64Array(p);for(const i of idx){const x=X[i];for(let a=0;a<p;a++){const xa=x[a];if(xa===0)continue;b[a]+=xa*y[i];const o=a*p;for(let c=a;c<p;c++)A[o+c]+=xa*x[c]}}
+for(let a=0;a<p;a++)for(let c=0;c<a;c++)A[a*p+c]=A[c*p+a];return{A,b}}
+function solve(A0,b0,lam,p){const A=Float64Array.from(A0),b=Float64Array.from(b0);for(let i=0;i<p;i++)A[i*p+i]+=i?lam:1e-8;
+for(let c=0;c<p;c++){let m=c;for(let r=c+1;r<p;r++)if(Math.abs(A[r*p+c])>Math.abs(A[m*p+c]))m=r;
+if(m!==c){for(let k=0;k<p;k++){const t=A[c*p+k];A[c*p+k]=A[m*p+k];A[m*p+k]=t}[b[c],b[m]]=[b[m],b[c]]}
+const d=A[c*p+c]||1e-12;for(let r=c+1;r<p;r++){const f=A[r*p+c]/d;if(!f)continue;for(let k=c;k<p;k++)A[r*p+k]-=f*A[c*p+k];b[r]-=f*b[c]}}
+const w=new Float64Array(p);for(let i=p-1;i>=0;i--){let s=b[i];for(let k=i+1;k<p;k++)s-=A[i*p+k]*w[k];w[i]=s/(A[i*p+i]||1e-12)}return w}
+const dot=(w,x)=>{let s=0;for(let i=0;i<w.length;i++)s+=w[i]*x[i];return s};
+const med=a=>{const s=a.slice().sort((x,y)=>x-y);return s.length?s[s.length>>1]:0},quant=(a,q)=>{const s=a.slice().sort((x,y)=>x-y);return s[Math.min(s.length-1,Math.floor(q*s.length))]};
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function train(tgt,feats){const n=S.rows.length,y=S.rows.map(r=>num(r[tgt])),lab=[];y.forEach((v,i)=>{if(isFinite(v)&&v>=0)lab.push(i)});
+if(lab.length<20)throw Error('Only '+lab.length+' rows have a valid like count (at least 20 are needed). Choose "None" as the target for a rough estimate.');
+if(lab.length<n)msg('warn',fmt(n-lab.length)+' rows have a missing or negative like count. They are excluded from training and predicted by the final model.');
+const F=features(feats,lab),X=F.X,p=F.p,yl=y.map(v=>isFinite(v)&&v>=0?Math.log1p(v):NaN);
+const K=lab.length>=60?5:3,R=rng(7),sh=lab.slice();for(let i=sh.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[sh[i],sh[j]]=[sh[j],sh[i]]}
+const folds=Array.from({length:K},()=>[]);sh.forEach((i,j)=>folds[j%K].push(i));
+const st=folds.map(f=>xtx(X,yl,f,p)),T={A:new Float64Array(p*p),b:new Float64Array(p)};st.forEach(s=>{s.A.forEach((v,i)=>T.A[i]+=v);s.b.forEach((v,i)=>T.b[i]+=v)});
+let best=null;for(const lam of[1,5,20,60,200,600,2000]){let sse=0;const oof={};folds.forEach((f,k)=>{const w=solve(T.A.map((v,i)=>v-st[k].A[i]),T.b.map((v,i)=>v-st[k].b[i]),lam,p);f.forEach(i=>{const z=dot(w,X[i]);oof[i]=z;sse+=(z-yl[i])**2})});if(!best||sse<best.sse)best={lam,sse,oof}}
+const w=solve(T.A,T.b,best.lam,p),res=lab.map(i=>yl[i]-best.oof[i]),q1=quant(res,.1),q9=quant(res,.9);
+const back=z=>Math.max(0,Math.expm1(z));let bAE=0,AE=0,SE=0,ape=[];const my=y.map(v=>v);const ma=lab.reduce((a,i)=>a+y[i],0)/lab.length;let sst=0,mlog=lab.reduce((a,i)=>a+yl[i],0)/lab.length,sstl=0;
+const base={};folds.forEach((f,k)=>{base[k]=med(lab.filter(i=>!f.includes(i)).map(i=>y[i]))});
+folds.forEach((f,k)=>f.forEach(i=>{const pr=back(best.oof[i]);AE+=Math.abs(y[i]-pr);SE+=(y[i]-pr)**2;bAE+=Math.abs(y[i]-base[k]);ape.push(Math.abs(y[i]-pr)/Math.max(y[i],1));sst+=(y[i]-ma)**2;sstl+=(yl[i]-mlog)**2}));
+const L=lab.length,cover=lab.filter((i,j)=>res[j]>=q1&&res[j]<=q9).length/L;
+const gi={};F.grp.forEach((g,j)=>gi[g]=(gi[g]||0)+Math.abs(w[j+1]));const tot=Object.values(gi).reduce((a,b)=>a+b,0)||1;
+const lset=new Set(lab);
+const out=S.rows.map((r,i)=>{const z=lset.has(i)?best.oof[i]:dot(w,X[i]);return{i,act:lset.has(i)?y[i]:null,pred:back(z),lo:back(z+q1),hi:back(z+q9),src:lset.has(i)?'cross-validated':'final model'}});
+return{mode:'model',tgt,out,F,imp:Object.entries(gi).map(([k,v])=>[k,v/tot]).sort((a,b)=>b[1]-a[1]),
+m:{L,K,lam:best.lam,mae:AE/L,rmse:Math.sqrt(SE/L),r2:1-SE/sst,r2l:1-best.sse/sstl,mdape:med(ape),bmae:bAE/L,cover,nf:F.names.length}}}
+function heur(feats){const fc=S.prof.find(p=>p.type=='numeric'&&/follower|subscriber|fans|audience/i.test(p.h));
+if(!fc)throw Error('Without like counts, an estimate needs a followers (or subscribers) column, and none was found. Add one, or upload data that includes likes.');
+const rate=(+$('#rate').value||2.5)/100,fv=S.rows.map(r=>num(r[fc.h])),md=med(fv.filter(isFinite));
+const dc=S.prof.find(p=>p.type=='date'||(p.type=='numeric'&&/^hour|hour$/i.test(p.h))),tc=S.prof.find(p=>p.type=='category'&&/type|format|media/i.test(p.h));
+const out=S.rows.map((r,i)=>{let f=isFinite(fv[i])?fv[i]:md,m=1;
+if(dc){let h=dc.type=='date'?new Date(Date.parse(r[dc.h])).getHours():num(r[dc.h]);if(isFinite(h)){if(h>=17&&h<=22)m*=1.12;else if(h<=5)m*=.8}}
+if(tc){const v=(r[tc.h]||'').toLowerCase();m*=/reel|video/.test(v)?1.2:/carousel|album/.test(v)?1.1:/text|link/.test(v)?.85:1}
+const e=f*rate*m;return{i,act:null,pred:e,lo:e*.5,hi:e*2,src:'heuristic'}});
+return{mode:'heur',out,F:null,imp:[],m:{rate,fc:fc.h,dc:dc&&dc.h,tc:tc&&tc.h}}}
+/* ---------- run + render ---------- */
+const CACHE=new Map();
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)+'-'+s.length}
+function saveLS(k,R){try{if(R.out.length>30000)return;localStorage.setItem('lc:'+k,JSON.stringify({mode:R.mode,tgt:R.tgt,imp:R.imp,m:R.m,out:R.out.map(o=>[o.i,o.act,Math.round(o.pred),Math.round(o.lo),Math.round(o.hi),o.src])}))}catch(e){}}
+function loadLS(k){try{const j=JSON.parse(localStorage.getItem('lc:'+k));if(!j)return null;j.F=null;j.out=j.out.map(a=>({i:a[0],act:a[1],pred:a[2],lo:a[3],hi:a[4],src:a[5]}));return j}catch(e){return null}}
+function ask(){return new Promise(r=>{const d=$('#dlg');d.showModal();$('#yes').onclick=()=>{d.close();r(true)};$('#no').onclick=()=>{d.close();r(false)};d.oncancel=()=>r(false)})}
+/* Wait time scales with data size: 10 s for small files up to 20 s at 50,000+ rows. */
+const waitMs=n=>Math.round(10000+10000*Math.min(1,n/50000));
+$('#run').onclick=async()=>{clr();const tgt=$('#tgt').value,feats=[...document.querySelectorAll('#feats input:checked')].map(i=>i.value);
+if(tgt&&!feats.length)return msg('err','Select at least one feature.');
+const key=S.hash+'|'+tgt+'|'+feats.join(',')+'|'+$('#rate').value,hit=CACHE.get(key)||loadLS(key);
+if(hit&&await ask()){S.res=hit;S.page=0;render();return}
+const total=waitMs(S.rows.length),t0=performance.now();
+$('#ov2').classList.remove('hid');$('#ovt').textContent='Analyzing '+fmt(S.rows.length)+' posts…';$('#bari').style.width='0';
+setTimeout(()=>{let R;try{R=tgt?train(tgt,feats):heur(feats)}catch(e){msg('err',e.message);$('#ov2').classList.add('hid');return}
+const tick=setInterval(()=>{const f=Math.min(1,(performance.now()-t0)/total);$('#bari').style.width=(f*100)+'%';
+$('#ovt').textContent=f<.3?'Cleaning and validating data…':f<.6?'Processing features…':f<.9?(tgt?'Fitting and validating model…':'Estimating likes…'):'Preparing results…';
+if(f>=1){clearInterval(tick);CACHE.set(key,R);saveLS(key,R);S.res=R;S.page=0;$('#ov2').classList.add('hid');render()}},120)},40)};
+function render(){const R=S.res,m=R.m;$('#s3').classList.remove('hid');const k=[];
+if(R.mode=='model'){$('#rmode').innerHTML='<span class="tag">Trained model</span> Ridge regression on log(1 + likes), '+m.nf+' features, '+m.K+'-fold cross-validation, penalty λ='+m.lam;
+k.push(['Mean absolute error',fmt(m.mae)+' likes',1],['Median % error',(m.mdape*100).toFixed(0)+'%'],['R² (likes)',m.r2.toFixed(2)],['R² (log scale)',m.r2l.toFixed(2)],['RMSE',fmt(m.rmse)],['Naive baseline MAE',fmt(m.bmae)],['Improvement vs baseline',((1-m.mae/m.bmae)*100).toFixed(0)+'%'],['Posts validated',fmt(m.L)]);
+$('#knote').textContent='Scores come from posts the model did not see during fitting. The range shown per post is an empirical 80% interval from those validation errors'+(m.r2<.2?'. Low R² means these features explain little of the variation; treat predictions as rough.':'.')}
+else{$('#rmode').innerHTML='<span class="tag">Heuristic estimate</span> No like counts available';
+k.push(['Followers column',m.fc],['Assumed rate',(m.rate*100).toFixed(1)+'%'],['Hour adjustment',m.dc||'not used'],['Format adjustment',m.tc||'not used'],['Posts estimated',fmt(R.out.length)]);
+$('#knote').textContent='These are uncalibrated estimates: followers × your assumed rate × small hard-coded adjustments. No accuracy can be measured without historical likes. The range is a wide ×0.5 to ×2 band.'}
+$('#kpis').innerHTML=k.map(([a,b,h])=>`<div class="kpi ${h?'hl':''}"><small>${a}</small><strong style="font-size:${String(b).length>12?15:23}px">${esc(b)}</strong></div>`).join('');
+$('#c1t').parentElement.classList.toggle('hid',R.mode!='model');$('#c2t').parentElement.classList.toggle('hid',R.mode!='model');
+requestAnimationFrame(()=>{if(R.mode=='model'){scatter($('#c1'),R.out.filter(o=>o.act!=null).map(o=>[Math.log1p(o.act),Math.log1p(o.pred)]));bars($('#c2'),R.imp.slice(0,10))}hist($('#c3'),R.out.map(o=>Math.log1p(o.pred)))});
+table();$('#s3').scrollIntoView({behavior:'smooth'})}
+const cv=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function setup(c,h){const d=devicePixelRatio||1,w=c.clientWidth;c.style.height=h+'px';c.width=w*d;c.height=h*d;const g=c.getContext('2d');g.scale(d,d);g.font='12px system-ui';return[g,w,h]}
+function axes(g,w,h,L,B,mx,xl,yl){g.strokeStyle=cv('--line');g.fillStyle=cv('--mut');g.lineWidth=1;for(let k=0;k<=4;k++){const v=mx*k/4,x=L+(w-L-10)*k/4,y=h-B-(h-B-10)*k/4;g.beginPath();g.moveTo(L,y);g.lineTo(w-10,y);g.stroke();g.textAlign='right';if(yl)g.fillText(fmt(Math.expm1(v)),L-5,y+4);g.textAlign='center';g.fillText(fmt(Math.expm1(v)),x,h-B+16)}}
+function scatter(c,pts){const[g,w,h]=setup(c,300),L=52,B=34,mx=Math.max(1,...pts.flat())*1.03;axes(g,w,h,L,B,mx,1,1);const sx=v=>L+v/mx*(w-L-10),sy=v=>h-B-v/mx*(h-B-10);
+g.strokeStyle=cv('--mint');g.setLineDash([5,4]);g.beginPath();g.moveTo(sx(0),sy(0));g.lineTo(sx(mx),sy(mx));g.stroke();g.setLineDash([]);
+g.fillStyle=cv('--acc');g.globalAlpha=.4;const st=Math.max(1,Math.floor(pts.length/2000));for(let i=0;i<pts.length;i+=st){g.beginPath();g.arc(sx(pts[i][0]),sy(pts[i][1]),2.6,0,7);g.fill()}g.globalAlpha=1;g.fillStyle=cv('--mut');g.textAlign='center';g.fillText('Actual likes (log scale)',L+(w-L)/2,h-2)}
+function bars(c,d){const[g,w,h]=setup(c,300),L=140,rowH=(h-10)/Math.max(d.length,1),mx=Math.max(...d.map(x=>x[1]),.01);d.forEach(([k,v],i)=>{const y=5+i*rowH;g.fillStyle=cv('--mut');g.textAlign='right';g.fillText(k.length>20?k.slice(0,19)+'…':k,L-8,y+rowH/2+4);g.fillStyle=cv('--acc');g.fillRect(L,y+4,(w-L-50)*v/mx,rowH-9);g.fillStyle=cv('--ink');g.textAlign='left';g.fillText((v*100).toFixed(0)+'%',L+(w-L-50)*v/mx+6,y+rowH/2+4)})}
+function hist(c,v){const[g,w,h]=setup(c,200),L=40,B=30,mx=Math.max(...v,1)*1.001,nb=28,b=new Array(nb).fill(0);v.forEach(x=>b[Math.min(nb-1,Math.floor(x/mx*nb))]++);const my=Math.max(...b,1),bw=(w-L-10)/nb;
+g.fillStyle=cv('--mint');b.forEach((n,i)=>{const bh=n/my*(h-B-10);g.fillRect(L+i*bw+1,h-B-bh,bw-2,bh)});g.fillStyle=cv('--mut');g.textAlign='right';g.fillText(fmt(my),L-5,18);
+g.textAlign='center';for(let k=0;k<=4;k++)g.fillText(fmt(Math.expm1(mx*k/4)),L+(w-L-10)*k/4,h-12)}
+function labelCol(){return(S.prof.find(p=>['text','id','category'].includes(p.type))||{}).h}
+function table(){const R=S.res,lc=labelCol(),q=$('#q').value.toLowerCase(),so=$('#sort').value;let a=R.out.filter(o=>!q||S.headers.some(h=>S.rows[o.i][h].toLowerCase().includes(q)));
+const err=o=>o.act==null?-1:Math.abs(o.act-o.pred);if(so=='pred')a.sort((x,y)=>y.pred-x.pred);else if(so=='act')a.sort((x,y)=>(y.act??-1)-(x.act??-1));else if(so=='err')a.sort((x,y)=>err(y)-err(x));
+const P=15,pages=Math.max(1,Math.ceil(a.length/P));S.page=Math.min(S.page,pages-1);const s=a.slice(S.page*P,S.page*P+P);
+$('#pg').textContent=fmt(a.length)+' posts · page '+(S.page+1)+' of '+pages;$('#prev').disabled=S.page==0;$('#next').disabled=S.page>=pages-1;
+$('#out').innerHTML='<tr><th class="n">Row</th>'+(lc?'<th>'+esc(lc)+'</th>':'')+'<th class="n">Actual</th><th class="n">Predicted</th><th class="n">Range (80%)</th><th class="n">Error</th><th>Source</th></tr>'+s.map(o=>`<tr><td class="n">${o.i+1}</td>${lc?'<td>'+esc(S.rows[o.i][lc])+'</td>':''}<td class="n">${o.act==null?'–':fmt(o.act)}</td><td class="n"><b>${fmt(o.pred)}</b></td><td class="n">${fmt(o.lo)} – ${fmt(o.hi)}</td><td class="n">${o.act==null?'–':(o.pred-o.act>0?'+':'')+fmt(o.pred-o.act)}</td><td>${o.src}</td></tr>`).join('')}
+$('#q').oninput=()=>{S.page=0;table()};$('#sort').onchange=()=>{S.page=0;table()};$('#prev').onclick=()=>{S.page--;table()};$('#next').onclick=()=>{S.page++;table()};
+$('#dl1').onclick=()=>{const R=S.res;dl('likecast_predictions.csv',toCSV(S.headers.concat(['predicted_likes','predicted_low_80','predicted_high_80','prediction_source','prediction_error']),R.out.map(o=>S.headers.map(h=>S.rows[o.i][h]).concat([Math.round(o.pred),Math.round(o.lo),Math.round(o.hi),o.src,o.act==null?'':Math.round(o.pred-o.act)]))))};
+$('#dl2').onclick=()=>{const R=S.res;if(!R.F)return msg('warn','Processed features are only available for a freshly trained model. Choose "No, run again" when prompted to regenerate them.');dl('likecast_processed_features.csv',toCSV(['row'].concat(R.F.names),R.F.X.map((x,i)=>[i+1].concat(Array.from(x.slice(1),v=>+v.toFixed(5))))))};
+/* ---------- input handling + demo ---------- */
+const drop=$('#drop');$('#pick').onclick=()=>$('#file').click();
+$('#file').onchange=e=>readF(e.target.files[0]);
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('on')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('on')}));
+drop.addEventListener('drop',e=>readF(e.dataTransfer.files[0]));
+function readF(f){if(!f)return;clr();if(f.size>60e6)return msg('err','File is larger than 60 MB. Split it or remove unneeded columns.');
+const r=new FileReader();r.onload=()=>load(r.result,f.name);r.onerror=()=>msg('err','The file could not be read.');r.readAsText(f)}
+</script></body></html>
